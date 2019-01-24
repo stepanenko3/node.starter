@@ -1,5 +1,5 @@
 module.exports = (item) => {
-    const columns = ['name', 'meta_title', 'meta_key', 'meta_desc', 'description', 'short_description'];
+    const columns = ['id', 'name', 'code', 'symbol', 'rate', 'locale', 'default'];
     const resource = {};
 
     columns.map((column) => {

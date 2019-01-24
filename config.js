@@ -59,4 +59,14 @@ config.validate({
     allowed: 'strict'
 });
 
+config.getDefault = (key, def) => {
+    if(config.has(key)) {
+        return config.get(key);
+    } else if(def) {
+        return def;
+    } else {
+        return;
+    }
+}
+
 module.exports = config;

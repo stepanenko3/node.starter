@@ -1,23 +1,34 @@
-const productDescriptionResource = require('./product_description');
+const description = require('./product_description');
+const category = require('./product_category');
 
-module.exports = (product) => {
+module.exports = (item) => {
     const columns = ['id', 'code', 'created_at'];
-    const newProduct = {};
+    const resource = {};
 
     columns.map((column) => {
-        if(column in product) {
-            newProduct[column] = product[column];
+        if(column in item) {
+            resource[column] = item[column];
         }
     });
 
-    if('product_descriptions' in product) {
+    if('product_descriptions' in item) {
         const descriptions = {};
-        product.product_descriptions.map(value => {
-            descriptions[value.lang] = productDescriptionResource(value);
+        item.product_descriptions.map(value => {
+            descriptions[value.lang] = description(value);
         });
         
-        newProduct.descriptions = descriptions;
+        resource.descriptions = descriptions;
     }
 
-    return newProduct;
+
+    if('product_categories' in item) {
+        const categories = [];
+        item.product_categories.map(value => {
+            categories.push(category(value));
+        })
+
+        resource.categories = categories;
+    }
+
+    return resource;
 }

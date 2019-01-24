@@ -2,26 +2,26 @@ const path = require('path')
 const express = require('express')
 const app = express()
 const config = require('./config');
+const models = require('./models')
+const bodyParser = require('body-parser')
 const expressWs = require('express-ws')(app);
 
-const api = require('./routes');
+const apiRouter = require('./routes');
+const wsRouter = require('./routes/ws');
 
-app.use('/api', api);
+//For BodyParser
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.get('/', (req, res, next) => {
-    console.log('Request URL:', req.originalUrl);
-    next();
-}, (request, response) => {
-    response.json('asd');
-})
-
-app.ws('/echo', function (ws, req) {
-    ws.on('message', function (msg) {
-
-        ws.send(JSON.stringify('11'));
-
+app.use((req, res, next) => {
+    models.configuration.findAll().then(data => {
+        config.load(data)
     });
+
+    next();
 });
+
+app.use('/api', apiRouter);
 
 app.use(function (req, res, next) {
     var err = new Error('Not Found');

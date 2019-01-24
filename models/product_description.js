@@ -34,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: false
     });
 
+    ProductDescription.associate = function(models) {
+        models.product_description.belongsTo(models.product);
+    };
 
     return ProductDescription;
 }
