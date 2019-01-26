@@ -47,6 +47,28 @@ var config = convict({
             format: '*',
             default: 8889
         }
+    },
+    appSecret: {
+        format: String,
+        default: ''
+    },
+    passport: {
+        jwt: {
+            session: {
+                format: Boolean,
+                default: false
+            },
+        },
+        facebook: {
+            id: {
+                format: String,
+                default: ''
+            },
+            secret: {
+                format: String,
+                default: ''
+            }
+        }
     }
 });
 
@@ -60,9 +82,9 @@ config.validate({
 });
 
 config.getDefault = (key, def) => {
-    if(config.has(key)) {
+    if (config.has(key)) {
         return config.get(key);
-    } else if(def) {
+    } else if (def) {
         return def;
     } else {
         return;

@@ -1,29 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('user', {
+    const UserProvider = sequelize.define('user_provider', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
-        first_name: {
+        user_id: {
+            type: DataTypes.INTEGER,
+        },
+        provider: {
             type: DataTypes.STRING
         },
-        last_name: {
-            type: DataTypes.STRING
-        },
-        username: {
-            type: DataTypes.STRING
-        },
-        email: {
+        provider_user_id: {
             type: DataTypes.STRING,
-            defaultValue: '',
-            // validate: {
-            //     isEmail: true
-            // }
         },
-        password: {
+        access_token: {
             type: DataTypes.STRING,
-            allowNull: false
+        },
+        refresh_token: {
+            type: DataTypes.STRING,
         },
 
         // Timestamps
@@ -34,11 +29,11 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: 'updated_at',
     });
 
-    User.associate = function (models) {
-        models.user.hasMany(models.user_provider, {
+    UserProvider.associate = function(models) {
+        models.user_provider.belongsTo(models.user, {
             foreignKey: 'user_id'
         });
     };
-
-    return User;
+    
+    return UserProvider;
 }

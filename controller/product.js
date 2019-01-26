@@ -2,6 +2,7 @@ const model = require('../models');
 const resource = require('../resources/product')
 
 exports.getAll = function (req, res) {
+    console.log(req.user);
     model.product.findAll({
         limit: 10,
         include: [{
