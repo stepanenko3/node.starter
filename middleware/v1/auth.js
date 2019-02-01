@@ -1,17 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
-const jwt = require("jwt-simple")
+
 const passport = require('passport')
-const models = require('../models')
-const config = require('../config')
-const bCrypt = require('bcrypt-nodejs')
+const models = require('../../models')
+const config = require('../../config')
 const JwtStrategy = require('passport-jwt').Strategy
 const ExtractJwt = require('passport-jwt').ExtractJwt
 const FacebookStrategy = require('passport-facebook').Strategy
-const slugify = require('slugify')
-// const userResource = require('../resources/user');
 
 JwtStrategy.prototype.authenticate = function (req, options) {
     var self = this;
@@ -59,82 +52,6 @@ JwtStrategy.prototype.authenticate = function (req, options) {
         }
     });
 }
-
-const opts = {
-    secretOrKey: config.get('appSecret'),
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-}
-
-router.post('/token', function (req, res) {
-    if (req.body.email && req.body.password) {
-        models.user.findOne({
-            where: {
-                [Op.or]: [{
-                    email: email
-                }, {
-                    username: email
-                }, {
-                    phone: email
-                }]
-            }
-        }).then(function (user) {
-            if (!user) {
-                return res.json({
-                    message: 'Email does not exist'
-                });
-            }
-
-            if (!bCrypt.compareSync(config.get('appSecret') + password, user.password)) {
-                return res.json({
-                    message: 'Incorrect password.'
-                });
-            }
-
-            const userinfo = user.get();
-
-            const token = jwt.encode({
-                id: userinfo.id,
-                email: userinfo.email
-            }, config.get('appSecret'));
-
-            res.json({
-                token: token
-            });
-
-        }).catch(function (err) {
-
-            console.log("Error:", err);
-
-            res.json({
-                message: 'Something went wrong with your Signin'
-            });
-
-        });
-    } else {
-        res.sendStatus(401);
-    }
-});
-
-router.get('/:provider', (req, res, next) => passport.authenticate(req.params.provider)(req, res, next));
-router.get('/:provider/callback', (req, res, next) => {
-    if (!req.query.code) next('route')
-    else next()
-}, (req, res) => {
-    res.render('provider', {
-        code: req.query.code,
-        provider: req.params.provider
-    })
-});
-
-router.post('/:provider', (req, res, next) => {
-    if (!req.query.code || !req.params.provider) next('route')
-    else next()
-}, (req, res, next) => passport.authenticate(req.params.provider, {
-    session: false
-})(req, res, next), (req, res) => {
-    res.json(req.user);
-});
-
 
 const findOrCreateUser = (payload, user, done) => {
     models.user_provider.findOne({
@@ -239,6 +156,11 @@ const findOrCreateUser = (payload, user, done) => {
 }
 
 module.exports = function () {
+    const opts = {
+        secretOrKey: config.get('appSecret'),
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+    }
+    
     passport.use(new JwtStrategy(opts, function (payload, done) {
         models.user.findOne({
                 id: payload.id,
@@ -260,7 +182,7 @@ module.exports = function () {
     passport.use(new FacebookStrategy({
         clientID: config.get('passport.facebook.id'),
         clientSecret: config.get('passport.facebook.secret'),
-        callbackURL: "http://localhost:3000/auth/facebook/callback",
+        callbackURL: "http://localhost:3000/api/v1/auth/facebook/callback",
         passReqToCallback: true
     }, (req, accessToken, refreshToken, profile, done) => {
         const user = findOrCreateUser({
@@ -277,7 +199,6 @@ module.exports = function () {
         optional: () => passport.authenticate('jwt', {
             session: config.get('passport.jwt.session'),
             optional: true
-        }),
-        router: router
+        })
     };
 };

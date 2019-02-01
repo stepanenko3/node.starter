@@ -20,6 +20,7 @@
         "express": "^4.16.4",
         "express-handlebars": "^3.0.0",
         "express-rate-limit": "^3.3.2",
+        "express-validation": "^1.0.2",
         "express-ws": "^4.0.0",
         "handlebars": "^4.0.12",
         "jwt-simple": "^0.5.5",

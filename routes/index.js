@@ -1,14 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const ProductRouter = require('./product');
-const WebSocketsRouter = require('./ws');
+const apiRouter = express.Router()
+const config = require('../config')
+const v1 = require('./v1')
 
-const appController = require('../controller/app');
+apiRouter.use('/v1', (req, res, next) => {
+    config.set('api.version', 1)
+    next();
+}, v1)
 
-router.use('/product', ProductRouter);
-router.use('/ws', WebSocketsRouter);
-router.get('/config', appController.getConfig);
-router.get('/currencies', appController.getCurrencies);
-router.get('/langs', appController.getLanguages);
-
-module.exports = router;
+module.exports = {
+    api: apiRouter
+};

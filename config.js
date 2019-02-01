@@ -69,6 +69,12 @@ var config = convict({
                 default: ''
             }
         }
+    },
+    api: {
+        version: {
+            format: Number,
+            default: 1
+        }
     }
 });
 

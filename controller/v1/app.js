@@ -1,7 +1,6 @@
-const config = require('../config');
-const model = require('../models');
-const currencyResource = require('../resources/currency');
-const languageResource = require('../resources/language');
+const config = require('../../config');
+const model = require('../../models');
+const resource = require('../../resources');
 
 exports.getConfig = (req, res) => {
     res.json({
@@ -18,14 +17,14 @@ exports.getConfig = (req, res) => {
 exports.getCurrencies = (req, res) => {
     model.currency.findAll()
         .then(data => {
-            res.json(data.map(currencyResource));
+            res.json(data.map(resource.currency));
         })
 }
 
 exports.getLanguages = (req, res) => {
     model.language.findAll()
         .then(data => {
-            res.json(data.map(languageResource));
+            res.json(data.map(resource.language));
         })
 }
 
@@ -34,6 +33,6 @@ exports.getCountries = (req, res) => {
 
     model.language.findAll()
         .then(data => {
-            res.json(data.map(languageResource));
+            res.json(data.map(resource.language));
         })
 }

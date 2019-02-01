@@ -1,5 +1,5 @@
-const model = require('../models');
-const resource = require('../resources/product')
+const model = require('../../models');
+const resource = require('../../resources')
 
 exports.getAll = function (req, res) {
     console.log(req.user);
@@ -16,6 +16,6 @@ exports.getAll = function (req, res) {
             }]
         }]
     }).then(data => {
-        res.json(data.map(resource));
+        res.json(data.map(resource.product));
     });
 };
