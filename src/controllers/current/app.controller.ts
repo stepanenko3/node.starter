@@ -1,4 +1,9 @@
-import { Controller, Get } from '@tsed/common';
+import { Controller, Get, Req, Res } from '@tsed/common';
+import * as Express from 'express';
+import * as _ from 'underscore';
+import { Country } from '../../models/country.model';
+import { Currency } from '../../models/currency.model';
+import { Language } from '../../models/language.model';
 import { ConfigService } from '../../services/config.service';
 
 @Controller('/app')
@@ -16,5 +21,28 @@ export class AppController {
             'product.maxInCompare': this.configService.get('product.maxInCompare', 20),
             'product.maxInFavorite': this.configService.get('product.maxInFavorite', 50),
         };
+    }
+
+    @Get('/currencies')
+    public async getCurrencies(@Res() res: Express.Response) {
+        return await Currency.findAll().then((data: Currency[]) => {
+            res.json(_.map(data, ((item: Currency) => item.resource())));
+        });
+    }
+
+    @Get('/languages')
+    public async getLanguages(@Res() res: Express.Response) {
+        return await Language.findAll().then((data: Language[]) => {
+            res.json(_.map(data, ((item: Language) => item.resource())));
+        });
+    }
+
+    @Get('/countries')
+    public async getCountries(@Res() res: Express.Response) {
+        return await Country.findAll({
+            order: [['title', 'ASC']],
+        }).then((data: Country[]) => {
+            res.json(_.map(data, ((item: Country) => item.resource())));
+        });
     }
 }
